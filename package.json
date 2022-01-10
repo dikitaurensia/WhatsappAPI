@@ -1,7 +1,7 @@
 {
   "name": "whatsapp-api",
   "version": "1.0.0",
-  "description": "Whatsapp api by Ngekoding",
+  "description": "Whatsapp api by AileenTech",
   "main": "app-multiple-device.js",
   "scripts": {
     "start": "node app-multiple-device.js",
@@ -12,7 +12,7 @@
     "whatsapp-api",
     "node.js"
   ],
-  "author": "Nur Muhammad",
+  "author": "Diki Taurens Sia",
   "license": "MIT",
   "dependencies": {
     "axios": "^0.20.0",
