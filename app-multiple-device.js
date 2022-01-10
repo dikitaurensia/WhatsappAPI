@@ -1,4 +1,4 @@
-const { Client, MessageMedia } = require('whatsapp-web.js');
+const { Client, MessageMedia, Buttons } = require('whatsapp-web.js');
 const express = require('express');
 const socketIO = require('socket.io');
 const qrcode = require('qrcode');
@@ -26,12 +26,12 @@ app.get('/', (req, res) => {
 const sessions = [];
 const SESSIONS_FILE = './whatsapp-sessions.json';
 
-const createSessionsFileIfNotExists = function() {
+const createSessionsFileIfNotExists = () => {
   if (!fs.existsSync(SESSIONS_FILE)) {
     try {
       fs.writeFileSync(SESSIONS_FILE, JSON.stringify([]));
       console.log('Sessions file created successfully.');
-    } catch(err) {
+    } catch (err) {
       console.log('Failed to create sessions file: ', err);
     }
   }
@@ -39,20 +39,18 @@ const createSessionsFileIfNotExists = function() {
 
 createSessionsFileIfNotExists();
 
-const setSessionsFile = function(sessions) {
-  fs.writeFile(SESSIONS_FILE, JSON.stringify(sessions), function(err) {
+const setSessionsFile = (sessions) => {
+  fs.writeFile(SESSIONS_FILE, JSON.stringify(sessions), (err) => {
     if (err) {
       console.log(err);
     }
   });
 }
 
-const getSessionsFile = function() {
-  return JSON.parse(fs.readFileSync(SESSIONS_FILE));
-}
+const getSessionsFile = () => JSON.parse(fs.readFileSync(SESSIONS_FILE))
 
-const createSession = function(id, description) {
-  console.log('Creating session: ' + id);
+const createSession = (id, description) => {
+  console.log(`Creating session: ${id}`);
   const SESSION_FILE_PATH = `./whatsapp-session-${id}.json`;
   let sessionCfg;
   if (fs.existsSync(SESSION_FILE_PATH)) {
@@ -88,7 +86,7 @@ const createSession = function(id, description) {
   });
 
   client.on('ready', () => {
-    io.emit('ready', { id: id });
+    io.emit('ready', { id: id, src: 'https://cdn.ndtv.com/tech/images/whatsapp_web_connected.jpg' });
     io.emit('message', { id: id, text: 'Whatsapp is ready!' });
 
     const savedSessions = getSessionsFile();
@@ -98,25 +96,25 @@ const createSession = function(id, description) {
   });
 
   client.on('authenticated', (session) => {
-    io.emit('authenticated', { id: id });
+    io.emit('authenticated', { id: id, src: 'https://cdn.ndtv.com/tech/images/whatsapp_web_connected.jpg' });
     io.emit('message', { id: id, text: 'Whatsapp is authenticated!' });
     sessionCfg = session;
-    fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), function(err) {
+    fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), (err) => {
       if (err) {
         console.error(err);
       }
     });
   });
 
-  client.on('auth_failure', function(session) {
+  client.on('auth_failure', (session) => {
     io.emit('message', { id: id, text: 'Auth failure, restarting...' });
   });
 
   client.on('disconnected', (reason) => {
     io.emit('message', { id: id, text: 'Whatsapp is disconnected!' });
-    fs.unlinkSync(SESSION_FILE_PATH, function(err) {
-        if(err) return console.log(err);
-        console.log('Session file deleted!');
+    fs.unlinkSync(SESSION_FILE_PATH, (err) => {
+      if (err) return console.log(err);
+      console.log('Session file deleted!');
     });
     client.destroy();
     client.initialize();
@@ -151,7 +149,7 @@ const createSession = function(id, description) {
   }
 }
 
-const init = function(socket) {
+const init = (socket) => {
   const savedSessions = getSessionsFile();
 
   if (savedSessions.length > 0) {
@@ -168,11 +166,11 @@ const init = function(socket) {
 init();
 
 // Socket IO
-io.on('connection', function(socket) {
+io.on('connection', (socket) => {
   init(socket);
 
-  socket.on('create-session', function(data) {
-    console.log('Create session: ' + data.id);
+  socket.on('create-session', (data) => {
+    console.log(`Create session: ${data.id}`);
     createSession(data.id, data.description);
   });
 });
@@ -226,9 +224,12 @@ app.post('/send-message', (req, res) => {
   const number = phoneNumberFormatter(req.body.number);
   const message = req.body.message;
 
+  const button = new Buttons(message, [{ body: "btn1" }, { body: "bt2" }, { body: "bt3" }], "Selamat Datang di MitranPack", "ini adalah footer");
+
   const client = sessions.find(sess => sess.id == sender).client;
 
-  client.sendMessage(number, message).then(response => {
+  // client.sendMessage(number, message).then(response => {
+  client.sendMessage(number, button).then(response => {
     res.status(200).json({
       status: true,
       response: response
@@ -241,6 +242,6 @@ app.post('/send-message', (req, res) => {
   });
 });
 
-server.listen(port, function() {
-  console.log('App running on *: ' + port);
+server.listen(port, () => {
+  console.log(`App running on *: ${port}`);
 });

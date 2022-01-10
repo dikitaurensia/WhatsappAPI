@@ -1,4 +1,4 @@
-const { Client, MessageMedia } = require('whatsapp-web.js');
+const { Client, MessageMedia, Buttons } = require('whatsapp-web.js');
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const socketIO = require('socket.io');
@@ -78,7 +78,7 @@ client.on('message', msg => {
 client.initialize();
 
 // Socket IO
-io.on('connection', function(socket) {
+io.on('connection', function (socket) {
   socket.emit('message', 'Connecting...');
 
   client.on('qr', (qr) => {
@@ -99,22 +99,22 @@ io.on('connection', function(socket) {
     socket.emit('message', 'Whatsapp is authenticated!');
     console.log('AUTHENTICATED', session);
     sessionCfg = session;
-    fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), function(err) {
+    fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), function (err) {
       if (err) {
         console.error(err);
       }
     });
   });
 
-  client.on('auth_failure', function(session) {
+  client.on('auth_failure', function (session) {
     socket.emit('message', 'Auth failure, restarting...');
   });
 
   client.on('disconnected', (reason) => {
     socket.emit('message', 'Whatsapp is disconnected!');
-    fs.unlinkSync(SESSION_FILE_PATH, function(err) {
-        if(err) return console.log(err);
-        console.log('Session file deleted!');
+    fs.unlinkSync(SESSION_FILE_PATH, function (err) {
+      if (err) return console.log(err);
+      console.log('Session file deleted!');
     });
     client.destroy();
     client.initialize();
@@ -122,7 +122,7 @@ io.on('connection', function(socket) {
 });
 
 
-const checkRegisteredNumber = async function(number) {
+const checkRegisteredNumber = async function (number) {
   const isRegistered = await client.isRegisteredUser(number);
   return isRegistered;
 }
@@ -204,9 +204,9 @@ app.post('/send-media', async (req, res) => {
   });
 });
 
-const findGroupByName = async function(name) {
+const findGroupByName = async function (name) {
   const group = await client.getChats().then(chats => {
-    return chats.find(chat => 
+    return chats.find(chat =>
       chat.isGroup && chat.name.toLowerCase() == name.toLowerCase()
     );
   });
@@ -295,7 +295,7 @@ app.post('/clear-message', [
   }
 
   const chat = await client.getChatById(number);
-  
+
   chat.clearMessages().then(status => {
     res.status(200).json({
       status: true,
@@ -309,6 +309,6 @@ app.post('/clear-message', [
   })
 });
 
-server.listen(port, function() {
+server.listen(port, function () {
   console.log('App running on *: ' + port);
 });

@@ -2,10 +2,10 @@
   "name": "whatsapp-api",
   "version": "1.0.0",
   "description": "Whatsapp api by Ngekoding",
-  "main": "app.js",
+  "main": "app-multiple-device.js",
   "scripts": {
-    "start": "node app.js",
-    "start-dev": "nodemon app.js",
+    "start": "node app-multiple-device.js",
+    "start-dev": "nodemon app-multiple-device.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -16,18 +16,18 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.20.0",
-    "express": "^4.17.1",
+    "express": "^4.17.2",
     "express-fileupload": "^1.2.0",
-    "express-validator": "^6.9.2",
+    "express-validator": "^6.14.0",
     "http": "0.0.1-security",
-    "qrcode": "^1.4.4",
+    "qrcode": "^1.5.0",
     "socket.io": "2.3.0",
-    "whatsapp-web.js": "latest"
+    "whatsapp-web.js": "^1.15.3"
   },
   "engines": {
     "node": "v12.10.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.15"
   }
 }

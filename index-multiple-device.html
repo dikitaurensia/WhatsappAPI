@@ -4,16 +4,127 @@
 <head>
 	<title>Whatsapp API by Aileen Tech</title>
 	<style>
+		body {
+			background: #222831;
+			color: #eee;
+		}
+
+		.client-container {
+			display: flex;
+			flex-wrap: wrap;
+		}
+
+
+		.client-container .client {
+			border: solid 1px #f2f2f2;
+			margin: 5px;
+		}
+
+		.client-container .client .client-body {
+			padding: 10px;
+		}
+
+		.client-container .client img.client-img {
+			height: 300px;
+			width: 300px;
+			object-fit: cover;
+		}
+
 		.client {
-			border: 1px solid #ccc;
-			padding: 20px;
-			box-sizing: border-box;
-			display: inline-block;
-			margin: 10px;
+			background: #00ADB5;
 		}
 
 		.hide {
 			display: none;
+		}
+
+		ul {
+			width: 83%;
+			height: 50px;
+			overflow: auto
+		}
+
+		.title {
+			font-size: 14pt;
+			font-weight: bold;
+		}
+
+		/* .add-client-btn {
+			width: 100%;
+			background-color: #4CAF50;
+			color: white;
+			padding: 14px 20px;
+			margin: 8px 0;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+		}
+
+		.add-client-btn:hover {
+			background-color: #45a049;
+		} */
+
+		/* input[type=text],
+		textarea,
+		select {
+			width: 100%;
+			padding: 12px 20px;
+			margin: 8px 0;
+			display: inline-block;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			box-sizing: border-box;
+		} */
+
+		.form-container {
+			display: flex;
+			flex-flow: row wrap;
+			align-items: center;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		.form-inline {
+			display: flex;
+			flex-flow: row wrap;
+			align-items: center;
+		}
+
+		.form-inline label {
+			margin: 5px 10px 5px 0;
+		}
+
+		.form-inline input {
+			vertical-align: middle;
+			margin: 5px 10px 5px 0;
+			padding: 10px;
+			background-color: #fff;
+			border: 1px solid #ddd;
+		}
+
+		.form-inline button {
+			padding: 10px 20px;
+			background-color: dodgerblue;
+			border: 1px solid #ddd;
+			color: white;
+			cursor: pointer;
+		}
+
+		.form-inline button:hover {
+			background-color: royalblue;
+		}
+
+		@media (max-width: 800px) {
+			.form-inline input {
+				margin: 10px 0;
+			}
+
+			.form-inline {
+				flex-direction: column;
+				align-items: stretch;
+			}
 		}
 	</style>
 </head>
@@ -21,9 +132,21 @@
 <body>
 
 	<div id="app">
+		<!-- <h1>Whatsapp API</h1>
+		<p>Powered by Aileen Tech</p> -->
+
 		<h1>Whatsapp API</h1>
-		<p>Powered by Aileen Tech</p>
-		<div class="form-container">
+		<form class="form-inline">
+			<label for="client-id">ID:</label>
+			<input type="text" id="client-id" placeholder="Masukkan ID">
+			<label for="client-description">Deskripsi:</label>
+			<input type="text" id="client-description" placeholder="Masukkan deskripsi">
+			<button class="add-client-btn">Tambah Client</button>
+		</form>
+
+
+		<!-- <h1>Whatsapp API</h1> -->
+		<!-- <div class="form-container">
 			<label for="client-id">ID</label><br>
 			<input type="text" id="client-id" placeholder="Masukkan ID">
 			<br><br>
@@ -31,16 +154,34 @@
 			<textarea rows="3" id="client-description" placeholder="Masukkan deskripsi"></textarea>
 			<br><br>
 			<button class="add-client-btn">Tambah Client</button>
-		</div>
+		</div> -->
+
+
 		<hr>
 		<div class="client-container">
 			<div class="client hide">
-				<h3 class="title"></h3>
+				<!-- <h3 class="title"></h3>
 				<p class="description"></p>
 				<img src="" alt="QR Code" id="qrcode">
 				<h3>Logs:</h3>
-				<ul class="logs"></ul>
+				<ul class="logs"></ul> -->
+
+				<img src="https://images.news18.com/ibnlive/uploads/2021/09/whatsapp_logo-16318782324x3.jpg"
+					class="client-img" alt="QR Code" id="qrcode">
+				<div class="client-body">
+					<!-- <h3 class="title"></h3>
+					<p class="description"></p>
+					<h3>Logs:</h3>
+					<ul class="logs"></ul> -->
+
+					<div class="title"></div>
+					<div class="description"></div>
+					<div>Logs:</div>
+					<ul class="logs"></ul>
+				</div>
 			</div>
+
+
 		</div>
 	</div>
 
@@ -54,6 +195,10 @@
 			$('.add-client-btn').click(function () {
 				var clientId = $('#client-id').val();
 				var clientDescription = $('#client-description').val();
+				if (clientId === "" || clientDescription === "") {
+					alert('Client ID atau Client Description Tidak boleh kosong!');
+					return;
+				}
 				var template = $('.client').first().clone()
 					.removeClass('hide')
 					.addClass(clientId);
@@ -104,11 +249,15 @@
 			});
 
 			socket.on('ready', function (data) {
-				$(`.client.${data.id} #qrcode`).hide();
+				// $(`.client.${data.id} #qrcode`).hide();	
+				$(`.client.${data.id} #qrcode`).attr('src', data.src);
+				$(`.client.${data.id} #qrcode`).show();
 			});
 
 			socket.on('authenticated', function (data) {
-				$(`.client.${data.id} #qrcode`).hide();
+				// $(`.client.${data.id} #qrcode`).hide();		
+				$(`.client.${data.id} #qrcode`).attr('src', data.src);
+				$(`.client.${data.id} #qrcode`).show();
 			});
 		});
 	</script>
