@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node app-multiple-device.js",
     "start-dev": "nodemon app-multiple-device.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
   },
   "keywords": [
     "whatsapp-api",
